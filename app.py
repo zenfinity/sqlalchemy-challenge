@@ -104,19 +104,19 @@ def tobs():
     lastDate = datetime.strptime(lastDateStr,"%Y-%m-%d")
     deltaOneYear = lastDate - dt.timedelta(days=365)
     deltaOneYearStr = deltaOneYear.strftime("%Y-%m-%d")
-    print(deltaOneYearStr)
-    #Get the station name
-    stationObsCounts = session.query(Measurement.station,func.count(Measurement.date)).\
-        group_by(Measurement.station).\
-        order_by(func.count(Measurement.date)).all()
-    heavyStation = stationObsCounts[0][0]
-    print(heavyStation)
+    #print(deltaOneYearStr)
+    #Get the station name...causing null query returns :(
+    # stationObsCounts = session.query(Measurement.station,func.count(Measurement.date)).\
+    #     group_by(Measurement.station).\
+    #     order_by(func.count(Measurement.date)).all()
+    # heavyStation = stationObsCounts[0][0]
+    # print(heavyStation)
     #Query the dates and temperature observations of the most active station for the last year of data
     lastYearHeavyStation = session.query(Measurement.date,Measurement.tobs).\
         filter(Measurement.date > deltaOneYearStr).\
-        filter(Measurement.station == heavyStation).\
+        filter(Measurement.station == "USC00519281").\
         order_by(Measurement.date).all()
-    print(lastYearHeavyStation)
+    #print(lastYearHeavyStation)
     session.close()
     #Return a JSON list of temperature observations (TOBS) for the previous year.
     
@@ -132,28 +132,28 @@ def summary_Start(start):
     session = Session(engine)
 
     #Get the station name
-    stationObsCounts = session.query(Measurement.station,func.count(Measurement.date)).\
-        group_by(Measurement.station).\
-        order_by(func.count(Measurement.date)).all()
-    heavyStation = stationObsCounts[0][0]
+    # stationObsCounts = session.query(Measurement.station,func.count(Measurement.date)).\
+    #     group_by(Measurement.station).\
+    #     order_by(func.count(Measurement.date)).all()
+    # heavyStation = stationObsCounts[0][0]
 
     lowTemp = session.query(func.min(Measurement.tobs)).\
-        filter(Measurement.date > start).\
-        filter(Measurement.station == heavyStation).all()
+        filter(Measurement.date >= start).\
+        filter(Measurement.station == "USC00519281").all()
     lowTemp = [t[0] for t in lowTemp]
-    print(f"lowTemp is {lowTemp[0]}")
+    #print(f"lowTemp is {lowTemp[0]}")
 
     highTemp = session.query(func.max(Measurement.tobs)).\
-        filter(Measurement.date > start).\
-        filter(Measurement.station == heavyStation).all()
+        filter(Measurement.date >= start).\
+        filter(Measurement.station == "USC00519281").all()
     highTemp = [t[0] for t in highTemp]
-    print(f"highTemp is {highTemp[0]}")
+    #print(f"highTemp is {highTemp[0]}")
 
     avgTemp = session.query(func.avg(Measurement.tobs)).\
-        filter(Measurement.date > start).\
-        filter(Measurement.station == heavyStation).all()
+        filter(Measurement.date >= start).\
+        filter(Measurement.station == "USC00519281").all()
     avgTemp = [t[0] for t in avgTemp]
-    print(f"avgTemp {avgTemp[0]}")
+    #print(f"avgTemp {avgTemp[0]}")
 
     session.close()
 
@@ -173,31 +173,31 @@ def summary_StartEnd(start,end):
     session = Session(engine)
 
     #Get the station name
-    stationObsCounts = session.query(Measurement.station,func.count(Measurement.date)).\
-        group_by(Measurement.station).\
-        order_by(func.count(Measurement.date)).all()
-    heavyStation = stationObsCounts[0][0]
+    # stationObsCounts = session.query(Measurement.station,func.count(Measurement.date)).\
+    #     group_by(Measurement.station).\
+    #     order_by(func.count(Measurement.date)).all()
+    # heavyStation = stationObsCounts[0][0]
 
     lowTemp = session.query(func.min(Measurement.tobs)).\
         filter(Measurement.date > start).\
         filter(Measurement.date < end).\
-        filter(Measurement.station == heavyStation).all()
+        filter(Measurement.station == "USC00519281").all()
     lowTemp = [t[0] for t in lowTemp]
-    print(f"lowTemp is {lowTemp[0]}")
+    #print(f"lowTemp is {lowTemp[0]}")
 
     highTemp = session.query(func.max(Measurement.tobs)).\
         filter(Measurement.date > start).\
         filter(Measurement.date < end).\
-        filter(Measurement.station == heavyStation).all()
+        filter(Measurement.station == "USC00519281").all()
     highTemp = [t[0] for t in highTemp]
-    print(f"highTemp is {highTemp[0]}")
+    #print(f"highTemp is {highTemp[0]}")
 
     avgTemp = session.query(func.avg(Measurement.tobs)).\
         filter(Measurement.date > start).\
         filter(Measurement.date < end).\
-        filter(Measurement.station == heavyStation).all()
+        filter(Measurement.station == "USC00519281").all()
     avgTemp = [t[0] for t in avgTemp]
-    print(f"avgTemp {avgTemp[0]}")
+    #print(f"avgTemp {avgTemp[0]}")
 
     session.close()
 
